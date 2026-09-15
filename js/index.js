@@ -46,32 +46,74 @@ async function boot(){
   if(await Z.admin()) $("#adminBtn").classList.remove("hidden");
   await loadTickets();
 }
+
 $("#loginForm").addEventListener("submit",async e=>{
-  e.preventDefault(); $("#loginOk").classList.remove("show");$("#loginErr").classList.remove("show");
-  if(!Z.configured){$("#loginErr").textContent="Configure d'abord Supabase.";$("#loginErr").classList.add("show");return}
+  e.preventDefault();
+  $("#loginOk").classList.remove("show");
+  $("#loginErr").classList.remove("show");
+  if(!Z.configured){
+    $("#loginErr").textContent="Configure d'abord Supabase.";
+    $("#loginErr").classList.add("show");
+    return;
+  }
   const email=$("#loginEmail").value.trim();
   const {error}=await Z.magic(email,location.href.split("#")[0]);
   (error?$("#loginErr"):$("#loginOk")).classList.add("show");
 });
+
 document.querySelectorAll(".serviceCard").forEach(c=>c.addEventListener("click",()=>{
-  $("#serviceSelect").value=c.dataset.service;$("#newTicket").scrollIntoView({behavior:"smooth"});
+  $("#serviceSelect").value=c.dataset.service;
+  $("#newTicket").scrollIntoView({behavior:"smooth"});
 }));
+
 $("#ticketForm").addEventListener("submit",async e=>{
-  e.preventDefault();const err=$("#createErr");err.classList.remove("show");
-  const btn=$("#createBtn");btn.disabled=true;btn.textContent="Création...";
+  e.preventDefault();
+
+  // IMPORTANT : on capture le formulaire et ses données AVANT le premier await.
+  // e.currentTarget devient null après une attente asynchrone dans certains navigateurs.
+  const form = e.currentTarget;
+  const fd = new FormData(form);
+
+  const err=$("#createErr");
+  err.classList.remove("show");
+  const btn=$("#createBtn");
+  btn.disabled=true;
+  btn.textContent="Création...";
+
   try{
-    const user=await Z.user(); if(!user) throw new Error("Session expirée");
-    const fd=new FormData(e.currentTarget);
+    const user=await Z.user();
+    if(!user) throw new Error("Session expirée");
+
     const payload={
-      user_id:user.id,email:user.email,customer_name:fd.get("customer_name").trim(),
-      discord:fd.get("discord").trim(),service:fd.get("service"),title:fd.get("title").trim(),
-      budget:fd.get("budget"),deadline:fd.get("deadline"),
-      description:fd.get("description").trim(),references_text:fd.get("references_text").trim()
+      user_id:user.id,
+      email:user.email,
+      customer_name:String(fd.get("customer_name") || "").trim(),
+      discord:String(fd.get("discord") || "").trim(),
+      service:fd.get("service"),
+      title:String(fd.get("title") || "").trim(),
+      budget:fd.get("budget"),
+      deadline:fd.get("deadline"),
+      description:String(fd.get("description") || "").trim(),
+      references_text:String(fd.get("references_text") || "").trim()
     };
-    const {data,error}=await Z.sb.from("tickets").insert(payload).select("id").single();
+
+    const {data,error}=await Z.sb
+      .from("tickets")
+      .insert(payload)
+      .select("id")
+      .single();
+
     if(error) throw error;
+
     await uploadFiles(data.id,null,[...$("#createFiles").files]);
+
     location.href=`ticket.html?id=${encodeURIComponent(data.id)}`;
-  }catch(ex){err.textContent=ex.message||"Impossible de créer le ticket.";err.classList.add("show");btn.disabled=false;btn.textContent="Créer le ticket →"}
+  }catch(ex){
+    err.textContent=ex.message||"Impossible de créer le ticket.";
+    err.classList.add("show");
+    btn.disabled=false;
+    btn.textContent="Créer le ticket →";
+  }
 });
+
 boot();
