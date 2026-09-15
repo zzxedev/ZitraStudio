@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>ZitraDev — Tickets & Commandes</title>
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script><script src="js/common.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="container nav">
+<a class="brand" href="index.html"><span class="brandmark">ZX</span><span>ZitraDev<span class="red">.</span> Tickets</span></a>
+<div class="navActions">
+<a class="btn ghost hideMobile" href="#newTicket">Nouvelle commande</a>
+<a class="btn alt hidden" id="adminBtn" href="admin.html">Espace admin</a>
+<button class="btn ghost hidden" id="logoutBtn">Déconnexion</button>
+</div></div></header>
+
+<main>
+<section class="hero"><div class="container heroGrid">
+<div>
+<div class="eyebrow">Commandes • Support • Suivi</div>
+<h1>Un vrai système de <span class="red">tickets.</span></h1>
+<p>Connecte-toi avec ton e-mail, crée une commande Roblox, échange directement dans le ticket et retrouve tout l'historique de tes demandes au même endroit.</p>
+<div class="heroActions"><a class="btn" href="#newTicket">Ouvrir un ticket →</a><a class="btn alt" href="#myTickets">Mes tickets</a></div>
+</div>
+<aside class="panel pad ticketMock">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px"><div><strong style="font-size:20px">#ZX-00142</strong><div class="small muted">Commande exemple</div></div><span class="pill status-in_progress">En cours</span></div>
+<div class="row"><small>Service</small><strong>Scripting / System</strong></div>
+<div class="row"><small>Projet</small><strong>Custom vehicle system</strong></div>
+<div class="row"><small>Dernier message</small><strong>“La V2 est prête à tester.”</strong></div>
+</aside>
+</div></section>
+
+<section class="section" id="authSection"><div class="container">
+<div class="panel pad authBox">
+<div class="eyebrow">Connexion client</div><h2 style="margin:0 0 10px">Accéder à tes tickets</h2>
+<p class="muted small">Pas de mot de passe à retenir : entre ton e-mail et tu recevras un lien de connexion sécurisé.</p>
+<form id="loginForm" class="formActions" style="margin-top:18px">
+<input id="loginEmail" type="email" required placeholder="ton@email.com" style="flex:1">
+<button class="btn" type="submit">Recevoir le lien</button>
+</form>
+<div class="notice ok" id="loginOk">Lien envoyé. Vérifie ta boîte mail.</div>
+<div class="notice err" id="loginErr">Impossible d'envoyer le lien.</div>
+</div></div></section>
+
+<section class="section hidden" id="clientSection">
+<div class="container">
+<div class="sectionHead"><div><div class="eyebrow">Compte client</div><h2>Bienvenue, <span class="red" id="clientEmail"></span></h2></div><p>Les tickets sont privés : seul le client concerné et l'administrateur peuvent les consulter.</p></div>
+
+<div class="serviceCards" style="margin-bottom:26px">
+<div class="serviceCard" data-service="Jeu Roblox complet"><strong>Jeu Roblox complet</strong><span>Gameplay, systèmes, UI, intégration.</span></div>
+<div class="serviceCard" data-service="Scripting / Système Roblox"><strong>Scripting / Systems</strong><span>Luau, véhicules, data, outils.</span></div>
+<div class="serviceCard" data-service="UI / UX"><strong>UI / UX</strong><span>Menus, HUD, shops et interfaces.</span></div>
+<div class="serviceCard" data-service="Asset 3D"><strong>Assets 3D</strong><span>Props et modèles prêts à intégrer.</span></div>
+<div class="serviceCard" data-service="Build / Map"><strong>Build / Map</strong><span>Maps, environnements et optimisation.</span></div>
+<div class="serviceCard" data-service="Bot Discord / Autre"><strong>Bot / Autre</strong><span>Bots et demandes personnalisées.</span></div>
+</div>
+
+<div class="grid2">
+<section class="panel pad" id="newTicket">
+<div class="eyebrow">Nouveau ticket</div><h2 style="margin:0 0 18px">Créer une commande</h2>
+<form id="ticketForm">
+<div class="formGrid">
+<div class="field"><label>Nom / pseudo *</label><input name="customer_name" required placeholder="Ex. BuilderMax"></div>
+<div class="field"><label>Discord / contact</label><input name="discord" placeholder="@buildermax"></div>
+<div class="field full"><label>Service *</label><select name="service" id="serviceSelect" required><option value="">Sélectionner...</option><option>Jeu Roblox complet</option><option>Scripting / Système Roblox</option><option>UI / UX</option><option>Asset 3D</option><option>Build / Map</option><option>Bot Discord / Autre</option></select></div>
+<div class="field full"><label>Nom du projet *</label><input name="title" required placeholder="Ex. Custom Proximity Prompt"></div>
+<div class="field"><label>Budget</label><select name="budget"><option>À discuter</option><option>Moins de 25 €</option><option>25 € – 50 €</option><option>50 € – 100 €</option><option>100 € – 250 €</option><option>250 € – 500 €</option><option>500 € et +</option></select></div>
+<div class="field"><label>Délai souhaité</label><select name="deadline"><option>Flexible</option><option>Moins d'une semaine</option><option>1 à 2 semaines</option><option>2 à 4 semaines</option><option>1 mois et +</option></select></div>
+<div class="field full"><label>Description détaillée *</label><textarea name="description" required placeholder="Explique les fonctionnalités, ce qui existe déjà, les contraintes et le résultat attendu."></textarea></div>
+<div class="field full"><label>Liens / références</label><textarea name="references_text" style="min-height:90px" placeholder="Drive, YouTube, Roblox, Trello..."></textarea></div>
+<div class="field full"><label>Fichiers (optionnel, 10 Mo max par fichier)</label><input id="createFiles" type="file" multiple></div>
+</div>
+<div class="formActions"><span class="small muted">Le ticket devient visible dans ton historique dès sa création.</span><button class="btn" id="createBtn" type="submit">Créer le ticket →</button></div>
+<div class="notice err" id="createErr"></div>
+</form>
+</section>
+
+<section class="panel pad" id="myTickets">
+<div class="eyebrow">Historique</div><h2 style="margin:0 0 18px">Mes tickets</h2>
+<div class="list" id="ticketList"><div class="empty">Chargement...</div></div>
+</section>
+</div>
+</div>
+</section>
+</main>
+<footer><div class="container foot"><span>© <span id="year"></span> ZitraDev Tickets</span><span>Roblox • Scripting • UI/UX • 3D • Builds</span></div></footer>
+<script src="js/index.js"></script>
+</body></html>

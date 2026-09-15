@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZitraDev — Ticket</title>
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script><script src="js/common.js"></script>
+</head>
+<body>
+<header class="topbar"><div class="container nav">
+<a class="brand" href="index.html"><span class="brandmark">ZX</span><span>ZitraDev<span class="red">.</span> Tickets</span></a>
+<div class="navActions"><a class="btn alt hidden" id="adminBtn" href="admin.html">Admin</a><a class="btn ghost" href="index.html">← Mes tickets</a><button class="btn ghost hidden hideMobile" id="logoutBtn">Déconnexion</button></div>
+</div></header>
+
+<main class="section"><div class="container">
+<div id="loginGate" class="panel pad authBox hidden">
+<div class="eyebrow">Connexion requise</div><h2 style="margin:0 0 10px">Ouvrir ce ticket</h2>
+<p class="small muted">Entre ton e-mail pour recevoir un lien de connexion.</p>
+<form id="loginForm" class="formActions"><input id="loginEmail" type="email" required placeholder="ton@email.com"><button class="btn">Recevoir le lien</button></form>
+<div id="loginMsg" class="notice ok">Lien envoyé.</div>
+</div>
+
+<div id="ticketApp" class="layout hidden">
+<aside class="panel pad sidebar">
+<div class="eyebrow">Ticket</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+<h2 id="ticketLabel" style="margin:0;font-size:28px">#ZX-...</h2><span id="statusPill" class="pill">...</span></div>
+<h3 id="ticketTitle" style="margin:12px 0 2px"></h3>
+<div class="small muted" id="ticketService"></div>
+<div class="detailList">
+<div class="detail"><small>Client</small><strong id="customerName"></strong></div>
+<div class="detail"><small>Contact</small><strong id="customerContact"></strong></div>
+<div class="detail"><small>Budget</small><strong id="budget"></strong></div>
+<div class="detail"><small>Délai</small><strong id="deadline"></strong></div>
+<div class="detail"><small>Créé</small><strong id="createdAt"></strong></div>
+</div>
+<div id="adminControls" class="hidden" style="margin-top:14px">
+<div class="eyebrow">Administration</div>
+<select id="statusSelect">
+<option value="new">Nouveau</option><option value="in_progress">En cours</option>
+<option value="waiting_client">En attente client</option><option value="completed">Terminé</option><option value="closed">Fermé</option>
+</select>
+<button id="saveStatus" class="btn alt" style="width:100%;margin-top:8px">Mettre à jour</button>
+</div>
+</aside>
+
+<section>
+<div class="panel pad" style="margin-bottom:12px">
+<div class="eyebrow">Brief</div><div id="description" class="messageBody"></div>
+<div id="refsWrap" class="hidden" style="margin-top:13px"><div class="small muted" style="margin-bottom:5px">Références / liens</div><div id="references" class="messageBody"></div></div>
+<div class="attachments" id="rootAttachments"></div>
+</div>
+
+<div class="panel pad">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px">
+<div><div class="eyebrow">Conversation</div><h2 style="margin:0;font-size:27px">Messages</h2></div>
+<button class="btn ghost" id="refreshBtn">Actualiser</button>
+</div>
+<div class="thread" id="thread"><div class="empty">Chargement...</div></div>
+<div class="replyBox">
+<textarea id="replyText" placeholder="Écris une réponse..."></textarea>
+<div id="internalWrap" class="hidden" style="margin-top:8px"><label style="display:flex;align-items:center;gap:7px"><input id="internalCheck" type="checkbox" style="width:auto"> Note interne (invisible pour le client)</label></div>
+<div class="replyRow"><input id="replyFiles" type="file" multiple><button class="btn" id="sendBtn">Envoyer →</button></div>
+<div id="replyErr" class="notice err"></div>
+</div>
+</div>
+</section>
+</div>
+
+<div id="notFound" class="panel pad authBox hidden"><h2>Ticket introuvable</h2><p class="muted small">Il n'existe pas, ou ton compte n'est pas autorisé à le consulter.</p><a class="btn alt" href="index.html">Retour</a></div>
+</div></main>
+<script src="js/ticket.js"></script>
+</body></html>
